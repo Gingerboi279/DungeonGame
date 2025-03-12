@@ -2,16 +2,14 @@
 {
     public class Room
     {
-        private string description;
+        public string Description { get; set; }
+        public string Item { get; set; }
 
-        public Room(string description)
+        // Constructor for Room
+        public Room(string description, string item = "No item")
         {
-            this.description = description;
-        }
-
-        public string GetDescription()
-        {
-            return description;
+            Description = description;
+            Item = item;
         }
     }
 }
