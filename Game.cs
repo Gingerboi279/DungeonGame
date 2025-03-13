@@ -80,21 +80,31 @@ namespace DungeonExplorer
         }
 
         private void VisitRoom(int roomNumber)
-        {
+        { 
             Room room = rooms[roomNumber - 1];
             Console.WriteLine($"\nYou have entered a room: {room.Description}");
             Console.WriteLine($"You see a {room.Item} on the ground.");
 
-            Console.Write("Would you like to pick it up? (y/n): ");
-            string input = Console.ReadLine().ToLower();
-
-            if (input == "y")
+            string input;
+            bool validInput = false;
+            while (!validInput)
             {
-                player.PickUpItem(room.Item);
-            }
-            else
-            {
-                Console.WriteLine("You chose not to pick up the item.");
+                Console.Write("Would you like to pick it up? (y/n): ");
+                input = Console.ReadLine()?.ToLower();
+                if (input == "y")
+                {
+                    player.PickUpItem(room.Item);
+                    validInput = true;
+                }
+                else if (input == "n")
+                {
+                    Console.WriteLine("You chose not to pick up the item.");
+                    validInput = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                }
             }
         }
     }
