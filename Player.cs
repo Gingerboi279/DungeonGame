@@ -1,25 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DungeonExplorer
 {
     public class Player
     {
-        public string Name { get; private set; }
-        public int Health { get; private set; }
-        private List<string> inventory = new List<string>();
+        public string Name { get; set; }
+        public string Inventory { get; set; }
 
-        public Player(string name, int health) 
+        public Player(string name)
         {
             Name = name;
-            Health = health;
+            Inventory = string.Empty;
         }
+
         public void PickUpItem(string item)
         {
-
+            if (string.IsNullOrEmpty(Inventory))
+            {
+                Inventory = item;
+                Console.WriteLine($"You have picked up the {item}.");
+            }
+            else
+            {
+                Console.WriteLine("You already have an item in your inventory.");
+            }
         }
-        public string InventoryContents()
+
+        public void ShowInventory()
         {
-            return string.Join(", ", inventory);
+            if (string.IsNullOrEmpty(Inventory))
+            {
+                Console.WriteLine("Your inventory is empty.");
+            }
+            else
+            {
+                Console.WriteLine($"Your inventory contains: {Inventory}");
+            }
         }
     }
 }
