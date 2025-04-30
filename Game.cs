@@ -21,10 +21,23 @@ namespace DungeonExplorer
             };
             playing = true;
         }
+        public abstract class Creature
+        {
+            public string Name { get; set; }
+            public int Health { get; set; }
+
+            protected Creature(string name, int health)
+            {
+                Name = name;
+                Health = health;
+            }
+
+            public abstract void Attack(Creature target);
+        }
 
         public void Start()
         {
-            Console.WriteLine("Welcome to Dungeon Explorer! Let's begin your adventure.");r
+            Console.WriteLine("Welcome to Dungeon Explorer! Let's begin your adventure.");
             Console.Write("Please enter your name: ");
             player.Name = Console.ReadLine();
 

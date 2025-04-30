@@ -38,5 +38,14 @@ namespace DungeonExplorer
                 Console.WriteLine($"Your inventory contains: {Inventory}");
             }
         }
+        public interface IDamageable
+        {
+            void TakeDamage(int amount);
+        }
+
+        public interface ICollectible
+        {
+            void Use(Player player);
+        }
     }
 }
