@@ -24,7 +24,7 @@ namespace DungeonExplorer
 
         public void Start()
         {
-            Console.WriteLine("Welcome to Dungeon Explorer! Let's begin your adventure.");
+            Console.WriteLine("Welcome to Dungeon Explorer! Let's begin your adventure.");r
             Console.Write("Please enter your name: ");
             player.Name = Console.ReadLine();
 
