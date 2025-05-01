@@ -1,42 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
+using static DungeonExplorer.Game;
+using static DungeonExplorer.Player;
+using System.Xml.Linq;
+using System.Linq;
+using System.Data.Common;
 
 namespace DungeonExplorer
 {
-    public class Player
+    public class Player : Creature, IDamageable
     {
-        public string Name { get; set; }
-        public string Inventory { get; set; }
+        public Inventory Inventory { get; private set; }
 
-        public Player(string name)
+        public Player(string name) : base(name, 100)
         {
-            Name = name;
-            Inventory = string.Empty;
+            Inventory = new Inventory();
         }
 
-        public void PickUpItem(string item)
+        public override void Attack(Creature target)
         {
-            if (string.IsNullOrEmpty(Inventory))
-            {
-                Inventory = item;
-                Console.WriteLine($"You have picked up the {item}.");
-            }
-            else
-            {
-                Console.WriteLine("You already have an item in your inventory.");
-            }
+            Console.WriteLine($"{Name} attacks {target.Name} with a basic attack.");
+            target.TakeDamage(10);
+        }
+    }
+    public class Inventory
+    {
+        private List<Item> items = new List<Item>();
+
+        public void AddItem(Item item)
+        {
+            items.Add(item);
+            Console.WriteLine($"Added {item.Name} to inventory.");
         }
 
         public void ShowInventory()
         {
-            if (string.IsNullOrEmpty(Inventory))
+            if (!items.Any())
             {
-                Console.WriteLine("Your inventory is empty.");
+                Console.WriteLine("Inventory is empty.");
+                return;
+            }
+            Console.WriteLine("Inventory:");
+            items.ForEach(i => Console.WriteLine($"- {i.Name}"));
+        }
+
+        public void UseItem(string name, Player player)
+        {
+            var item = items.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
+            if (item != null)
+            {
+                item.Use(player);
+                items.Remove(item);
             }
             else
             {
-                Console.WriteLine($"Your inventory contains: {Inventory}");
+                Console.WriteLine("Item not found.");
             }
+        }
+
+        public void ShowWeaponsOnly()
+        {
+            //Here we see an example of using LINQs to filter items in the inentory to only weapons
+            var weapons = items.OfType<Weapon>().ToList();
+            if (!weapons.Any())
+            {
+                Console.WriteLine("No weapons found in inventory.");
+                return;
+            }
+            weapons.ForEach(w => Console.WriteLine($"Weapon: {w.Name}, Damage: {w.Damage}"));
         }
     }
 }

@@ -3,13 +3,14 @@
     public class Room
     {
         public string Description { get; set; }
-        public string Item { get; set; }
+        public Item RoomItem { get; set; }
+        public Monster RoomMonster { get; set; }
 
-        // Constructor for Room
-        public Room(string description, string item = "No item")
+        public Room(string description, Item item, Monster monster)
         {
             Description = description;
-            Item = item;
+            RoomItem = item;
+            RoomMonster = monster;
         }
     }
 }
