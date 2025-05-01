@@ -46,13 +46,13 @@ namespace DungeonExplorer
 
         public void UseItem(string name, Player player)
         {
-            var item = items.FirstOrDefault(i => i.Name.ToLower() == name.ToLower());
-            if (item != null)
+            try
             {
+                var item = items.First(i => i.Name.ToLower() == name.ToLower());
                 item.Use(player);
                 items.Remove(item);
             }
-            else
+            catch (InvalidOperationException)
             {
                 Console.WriteLine("Item not found.");
             }
