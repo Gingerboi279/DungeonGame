@@ -29,7 +29,7 @@ namespace DungeonExplorer
 
         public override void Use(Player player)
         {
-            Console.WriteLine($"{player.Name} uses {Name}, increasing attack power by {Damage}!");
+            Console.WriteLine($"{player.Name} uses {Name}, increasing your damage by {Damage}");
         }
     }
     public class Potion : Item
@@ -46,5 +46,9 @@ namespace DungeonExplorer
             player.Health += HealAmount;
             Console.WriteLine($"{player.Name} drinks {Name}, restoring {HealAmount} health. Current health: {player.Health}");
         }
+    }
+    public interface ICollectible
+    {
+        void Use(Player player);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 
 namespace DungeonExplorer
 {
@@ -15,33 +16,20 @@ namespace DungeonExplorer
             player = new Player("Joe");
             rooms = new Room[]
             {
-                new Room("A dark and ominous cave with the sound of dripping water somewhere in the distance", "Mysterious Key"),
-                new Room("A quiet forest clearing with the faint smell of flowers", "Magical Herb"),
-                new Room("An abandoned castle room with broken furniture and dust", "Ancient Tome")
+                new Room("A Cave filled with bats", new Potion("Health Potion", 20), new Monster("Goblin", 30)),
+                new Room("A throne room with a dusty throne at the end", new Weapon("Ancient Sword", 25), new Monster("Royal Guard", 60)),
+                new Room("An eerie graveyard", new Potion("Lesser Health Potion", 15), new Monster("Skeleton", 35))
             };
             playing = true;
-        }
-        public abstract class Creature
-        {
-            public string Name { get; set; }
-            public int Health { get; set; }
-
-            protected Creature(string name, int health)
-            {
-                Name = name;
-                Health = health;
-            }
-
-            public abstract void Attack(Creature target);
         }
 
         public void Start()
         {
-            Console.WriteLine("Welcome to Dungeon Explorer! Let's begin your adventure.");
-            Console.Write("Please enter your name: ");
+            Console.WriteLine("Welcome Traveller!");
+            Console.Write("Please enter your name:");
             player.Name = Console.ReadLine();
 
-            while (playing)
+            while (playing && player.Health > 0)
             {
                 PathwayChoice();
                 int choice = GetUserChoice();
@@ -52,12 +40,18 @@ namespace DungeonExplorer
                 }
                 else if (choice == 4)
                 {
-                    player.ShowInventory();
+                    player.Inventory.ShowInventory();
                 }
                 else if (choice == 5)
                 {
+                    Console.Write("Enter item name to use:");
+                    string itemName = Console.ReadLine();
+                    player.Inventory.UseItem(itemName, player);
+                }
+                else if (choice == 6)
+                {
                     playing = false;
-                    Console.WriteLine("Thank you for playing Dungeon Explorer! Goodbye!");
+                    Console.WriteLine("Thank you for playing Traveller, goodbye!");
                 }
                 else
                 {
@@ -73,51 +67,59 @@ namespace DungeonExplorer
             Console.WriteLine("2. Visit Room 2");
             Console.WriteLine("3. Visit Room 3");
             Console.WriteLine("4. View Inventory");
-            Console.WriteLine("5. Exit");
-            Console.Write("What would you like to do? ");
+            Console.WriteLine("5. Use Item");
+            Console.WriteLine("6. Exit");
+            Console.Write("What would you like to do?");
         }
 
         private int GetUserChoice()
         {
             int choice = -1;
-            while (choice < 1 || choice > 5)
+            while (choice < 1 || choice > 6)
             {
                 // Try to read and parse the input as an integer
                 string input = Console.ReadLine();
-                if (!int.TryParse(input, out choice) || choice < 1 || choice > 5)
+                if (!int.TryParse(input, out choice) || choice < 1 || choice > 6)
                 {
-                    Console.Write("It appears you entered an invalid number. Please try again: ");
+                    Console.Write("You have entered an invalid number, try again:");
                 }
             }
             return choice;
         }
 
         private void VisitRoom(int roomNumber)
-        { 
+        {
             Room room = rooms[roomNumber - 1];
-            Console.WriteLine($"\nYou have entered a room: {room.Description}");
-            Console.WriteLine($"You see a {room.Item} on the ground.");
+            Console.WriteLine($"\nYou enter the room: {room.Description}");
+            Console.WriteLine($"A {room.RoomMonster.Name} has approached");
 
-            string input;
-            bool validInput = false;
-            while (!validInput)
+            while (room.RoomMonster.Health > 0 && player.Health > 0)
             {
-                Console.Write("Would you like to pick it up? (y/n): ");
-                input = Console.ReadLine()?.ToLower();
-                if (input == "y")
+                Console.Write("Do you want to attack?(yes/no):");
+                string input = Console.ReadLine()?.ToLower();
+                if (input == "yes")
                 {
-                    player.PickUpItem(room.Item);
-                    validInput = true;
-                }
-                else if (input == "n")
-                {
-                    Console.WriteLine("You chose not to pick up the item.");
-                    validInput = true;
+                    player.Attack(room.RoomMonster);
+                    if (room.RoomMonster.Health > 0)
+                        room.RoomMonster.Attack(player);
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input. Please enter 'y' or 'n'.");
+                    Console.WriteLine("You run from Battle");
+                    return;
                 }
+            }
+
+            if (player.Health > 0)
+            {
+                Console.WriteLine($"You defeated the {room.RoomMonster.Name}!");
+                Console.WriteLine($"You find a {room.RoomItem.Name}.");
+                player.Inventory.AddItem(room.RoomItem);
+            }
+            else
+            {
+                Console.WriteLine("You have been slain in battle");
+                playing = false;
             }
         }
     }
